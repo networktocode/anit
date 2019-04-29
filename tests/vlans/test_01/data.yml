@@ -1,0 +1,9 @@
+---
+
+vlans:
+  - id: 10
+    name: web
+  - id: 20
+    name: app
+  - id: 30
+    name: db

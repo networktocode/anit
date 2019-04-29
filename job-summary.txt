@@ -1,0 +1,19 @@
+Configuration Build Testing Job Summary
+-------------------------------------------------------------
+
+**INFO: FEATURE bgp        TEST: test_01    ---------> PASSED    
+**INFO: FEATURE bgp        TEST: test_02    ---------> PASSED    
+**INFO: FEATURE vlans      TEST: test_01    ---------> PASSED    
+**INFO: FEATURE vlans      TEST: test_02    ---------> FAILED    
+--- tests/vlans/test_02/expected_config.cfg
++++ outputs/vlans/test_02/generated_config.cfg
+@@ -2,5 +2,5 @@
+   name web
+ vlan 20
+   name app
+-vlan 30
++vlan 300
+   name db
+
+Summary: 4 data files tested
+

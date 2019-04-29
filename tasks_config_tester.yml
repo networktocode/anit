@@ -1,0 +1,59 @@
+---
+
+  # item is name of the data yaml file
+  # the initating loop can be found in 
+  # the playbook iterating over all data files
+  # look for MAIN: EXECUTE ALL TESTS task
+  - name: "TASKS: TESTING BEGINNING"
+    set_fact:
+      # path = tests/vlans/test_01/data.yml
+      feature: "{{ item.path.split('/')[1] }}"
+      test_name: "{{ item.path.split('/')[2] }}"
+      data_file: "{{ item.path }}"
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> LOAD DATA"
+    include_vars:
+      file: "{{ data_file }}"
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> SET PATH"
+    set_fact:
+      test_path: "{{ output_dir }}/{{ feature }}/{{ test_name }}"
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> CREATE DIRECTORY STRUCTURE"
+    file:
+      path: "{{ test_path }}"
+      state: directory
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> GENERATE {{ feature | upper }} CONFIG"
+    template:
+      src: "{{ template }}"
+      dest: ./{{ test_path }}/generated_config.cfg
+    with_first_found:
+      - "{{ test_dir }}/{{ feature }}/{{ test_name }}/{{ feature }}.j2"
+      - "{{ feature }}.j2"
+    loop_control:
+      loop_var: template
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> COMPARE EXPECTED TO TEST RESULTS"
+    ntc_differ:
+      pre_change: "{{ test_dir }}/{{ feature }}/{{ test_name }}/expected_config.cfg"
+      post_change: "{{ test_path }}/generated_config.cfg"
+      dest: "./{{ test_path }}/test_results.cfg"
+    register: diff
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> SHOW THE DIFF"
+    debug:
+      var: "diff.diff_output"
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> ASSERT THAT THERE IS NO DIFF"
+    assert:
+      that: 
+        - diff.diff_output == ""
+    ignore_errors: true
+    register: assert_result
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> GENERATE TEST LOG"
+    template:
+      src: "report.j2"
+      dest: "{{ output_dir }}/reports/{{ feature }}_{{ test_name }}.txt"
+

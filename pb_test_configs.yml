@@ -1,0 +1,65 @@
+---
+
+- name: "UNIT TESTING THE NETWORK CONFIG BUILD PROCESS"
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars:
+    output_dir: "outputs"
+    test_dir: "tests"
+
+  tasks:
+
+    - name: "MAIN: GATHER ALL TEST DATA FILES"
+      find:
+        paths: ./tests
+        patterns: "data.yml"
+        recurse: true
+      register: test_data_files
+
+    - name: "MAIN: REMOVE PREVIOUS OUTPUT DIRECTORIES"
+      file:
+        path: "{{ output_dir }}"
+        state: absent
+
+    - name: "MAIN: REMOVE LAST JOB SUMMARY FILE"
+      file:
+        path: "job-summary.txt"
+        state: absent
+
+    - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE"
+      file:
+        path: "{{ output_dir }}/reports"
+        state: directory
+
+    - name: "MAIN: EXECUTE TESTS"
+      include_tasks: tasks_config_tester.yml
+      loop: "{{ test_data_files['files'] }}"
+
+    - name: "MAIN: GENERATE MASTER LOG"
+      assemble:
+        src: "./{{ output_dir }}/reports/"
+        dest: "job-summary.txt"
+
+    - name: "MAIN: ADD HEADER TO MASTER LOG"
+      lineinfile:
+        path: "job-summary.txt"
+        insertbefore: BOF
+        line: |
+          Configuration Build Testing Job Summary
+          -------------------------------------------------------------
+
+    - name: "MAIN: ADD SUMMARY TO MASTER LOG"
+      lineinfile:
+        path: "job-summary.txt"
+        insertafter: EOF
+        line: |
+
+          Summary: {{ test_data_files['files'] | length }} data files tested
+
+    - name: "MAIN: SHOW STATUS SUMMARY"
+      debug:
+        msg: >
+          View job-summary.txt in the project path to view 
+          the Job Summary.

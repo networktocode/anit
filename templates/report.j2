@@ -1,0 +1,10 @@
+{% if 'passed' in assert_result.get('msg', '') %}
+{% set status = "PASSED" %}
+{% else %}
+{% set status = "FAILED" %}
+{% endif %}
+**INFO: FEATURE {{ feature.ljust(10) }} TEST: {{ test_name.ljust(10) }} ---------> {{ status.ljust(10) }}
+{% if status == "FAILED" %}
+{% set diff = lookup('file', './{{ test_path }}/test_results.cfg' ) %}
+{{ diff }}
+{% endif %}
