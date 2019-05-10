@@ -103,3 +103,9 @@ vlan {{ vlan['id'] }}
 (noxy) ntc@ntc:ansible-build-test$ 
 ```
 
+
+## TODO
+
+* Explore the use of `testinfra` and `pytest-ansible`.
+
+
