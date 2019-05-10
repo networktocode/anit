@@ -1,6 +1,6 @@
 Configuration Build Testing Job Summary
-   -> Ansible Version: 2.6.4
-   -> Python Version: python
+   -> Ansible Version: 2.7.10
+   -> Python Version: python3.6
 -------------------------------------------------------------
 
 **INFO: FEATURE bgp        TEST: test_01    ---------> PASSED    

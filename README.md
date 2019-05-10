@@ -34,10 +34,10 @@ If you run the playbook locally, you can just view the `job-summary.txt` generat
 For each playbook that runs, it generates a `job-summary.txt` that looks like this:
 
 ```
-(noxy) ntc@ntc:ansible-build-test$ cat job-summary.txt 
+(noxy) ntc@ntc:ansible-build-test (master)$ cat job-summary.txt 
 Configuration Build Testing Job Summary
-   -> Ansible Version: 2.6.4
-   -> Python Version: python
+   -> Ansible Version: 2.7.10
+   -> Python Version: python3.6
 -------------------------------------------------------------
 
 **INFO: FEATURE bgp        TEST: test_01    ---------> PASSED    
