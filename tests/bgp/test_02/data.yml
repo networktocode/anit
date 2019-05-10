@@ -1,4 +1,9 @@
 ---
 
+meta:
+  os: nxos
+  vendor: cisco
+
+
 bgp_asn: 65512
 bgp_rid: 2.2.2.2
