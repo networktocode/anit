@@ -1,5 +1,9 @@
 ---
 
+meta:
+  os: ios
+  vendor: cisco
+
 bgp:
   asn: 65512
   rid: 1.1.1.1

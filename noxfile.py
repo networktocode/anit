@@ -12,5 +12,5 @@ def test_configuration_data(session, ansible):
     """
     py_version = session.python
     session.install("ansible=={}".format(ansible))
-    session.run("ansible-playbook", "-i", "localhost,", "pb_test_configs.yml")
+    session.run("ansible-playbook", "-i", "inventory", "pb_test_configs.yml")
     session.run("cat", "job-summary.txt", external=True)
