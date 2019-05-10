@@ -4,9 +4,9 @@
 
 ANIT is a framework to show how traditional unittesting concepts can be applied to the process of generating Cisco network configuration files when using Ansible.  All examples provided focus on having a robust templating framework for Cisco device management.  
 
-Not only will this testing approach allow a user to verify that different data files (YAML) render the proper expected CLI network configurations using the same or different Jinja templates, **it will do across different versions of both Python and Ansible**.  
+Not only will this testing approach allow a user to verify that different data files (YAML) render the proper expected CLI network configurations using the same or different Jinja templates, **it will do so across different versions of both Python and Ansible**.  
 
-In other words, it'll verify your network YAML data (the YAML files), Jinja template(s), Python version, and Ansible version won't break the configuration being built and deployed to network infrastructure.  This comes in to be super handy to test various YAML data structures to ensure your Jinja logic is sound and accounts for both required and optional variables and data.
+In other words, it'll verify your network YAML data (the YAML files), Jinja template(s), Python version, and Ansible version won't break the configuration being built and deployed to network infrastructure.  This comes in to be super handy to test various YAML data structures to ensure your Jinja logic is sound and accounts for both required and optional variables in the data.
 
 The project uses `nox`, a Python testing framework.  It's similar to `tox`, but uses a Python-based config file allowing for maximum flexibility.  You would trigger `nox` via Jenkins or Travis if you choose to use this framework.
 
