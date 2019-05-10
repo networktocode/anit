@@ -20,7 +20,9 @@ The project uses `nox`, a Python testing framework.  It's similar to `tox`, but 
 6. In each test sub-directory (`test01` as an example), create `data.yml` and `expected_config.cfg`. `data.yml` is a YAML file of the data used in your Jinja template for that feature.  It must also include a `meta` key that includes `os` and `vendor` attributes.  The `expected_config.cfg` is the CLI commands that should get generated from the data and Jinja2 template.  All data files will be rendered with the template in the previous step.  This is based on N data files and 1 Jinja template.  Optionally, you can add a Jinja template per test case in this directory, also called `{{ feature }}.j2`.  This template will take priority over one with the same in the `templates` directory.
 7. Edit `noxfile.py` with the versions of Python and Ansible you want to test against.
 8. Execute your tests by
+
   (a) Running `nox` (to test all environments)
+  
   (b) Running `ansible-playbook -i localhost, pb_test_configs.yml` to test in your working environment.
 
 
