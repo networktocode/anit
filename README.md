@@ -131,6 +131,7 @@ vlan {{ vlan['id'] }}
 (noxy) ntc@ntc:ansible-build-test$ 
 ```
 
+
 `test02` is showing bad data while `test03` is showing the output when there is a bad template.
 
 
@@ -201,5 +202,8 @@ This can be seen more clearly with the specific task in the tasks file:
 ```
 
 
+## TODO
+
+* Explore the use of `testinfra` and `pytest-ansible`.
 
 
