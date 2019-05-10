@@ -1,4 +1,6 @@
 Configuration Build Testing Job Summary
+   -> Ansible Version: 2.6.4
+   -> Python Version: python
 -------------------------------------------------------------
 
 **INFO: FEATURE bgp        TEST: test_01    ---------> PASSED    
@@ -14,6 +16,8 @@ Configuration Build Testing Job Summary
 -vlan 30
 +vlan 300
    name db
+**INFO: FEATURE vlans      TEST: test_03    ---------> FAILED    
+AnsibleUndefinedVariable: 'dict object' has no attribute 'name'
 
-Summary: 4 data files tested
+Summary: 5 data files tested
 

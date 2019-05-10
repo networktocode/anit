@@ -28,9 +28,14 @@
         path: "job-summary.txt"
         state: absent
 
-    - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE"
+    - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE 01"
       file:
         path: "{{ output_dir }}/reports"
+        state: directory
+
+    - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE 02"
+      file:
+        path: "/tmp/ntc"
         state: directory
 
     - name: "MAIN: EXECUTE TESTS"
@@ -48,6 +53,8 @@
         insertbefore: BOF
         line: |
           Configuration Build Testing Job Summary
+             -> Ansible Version: {{ ansible_version['full']}}
+             -> Python Version: {{ ansible_playbook_python | basename | default('N/A') }}
           -------------------------------------------------------------
 
     - name: "MAIN: ADD SUMMARY TO MASTER LOG"
@@ -63,3 +70,8 @@
         msg: >
           View job-summary.txt in the project path to view 
           the Job Summary.
+
+    - name: "COPY REPORT TO TMP FOR VIEWING OF VENV TESTS"
+      copy:
+        src: "./job-summary.txt"
+        dest: "/tmp/ntc/{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}-ansible{{ ansible_version['full']}}-{{ ansible_playbook_python | basename | default('NA') }}-job-summary.txt"

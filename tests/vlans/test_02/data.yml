@@ -1,5 +1,9 @@
 ---
 
+meta:
+  os: ios
+  vendor: cisco
+
 vlans:
   - id: 10
     name: web

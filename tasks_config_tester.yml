@@ -30,9 +30,16 @@
       dest: ./{{ test_path }}/generated_config.cfg
     with_first_found:
       - "{{ test_dir }}/{{ feature }}/{{ test_name }}/{{ feature }}.j2"
+      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/{{ family }}/{{ model }}/{{ feature }}.j2"
+      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/{{ family }}/defaults/{{ feature }}.j2"
+      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/defaults/{{ feature }}.j2"
+      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/defaults/{{ feature }}.j2"
+      - "templates/{{ meta['vendor'] }}/defaults/{{ feature }}.j2"
       - "{{ feature }}.j2"
     loop_control:
       loop_var: template
+    ignore_errors: true
+    register: template_status
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> COMPARE EXPECTED TO TEST RESULTS"
     ntc_differ:
@@ -40,6 +47,13 @@
       post_change: "{{ test_path }}/generated_config.cfg"
       dest: "./{{ test_path }}/test_results.cfg"
     register: diff
+    when: template_status['changed']
+
+  - name: "{{ feature | upper }}: {{ test_name | upper }}-> TEMPLATE FAILURE TO TEST RESULTS"
+    copy:
+      content: "{{ template_status['results'][0]['msg'] }}"
+      dest: "./{{ test_path }}/test_results.cfg"
+    when: template_status is failed
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> SHOW THE DIFF"
     debug:
