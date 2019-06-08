@@ -23,7 +23,7 @@ The project uses `nox`, a Python testing framework.  It's similar to `tox`, but 
 
   (a) Running `nox` (to test all environments)
   
-  (b) Running `ansible-playbook -i localhost, pb_test_configs.yml` to test in your working environment.
+  (b) Running `ansible-playbook -i localhost pb_test_configs.yml` to test in your working environment.
 
 
 If you run the playbook locally, you can just view the `job-summary.txt` generated.  However, since `nox` uses Python venv's, we also write all job summaries to `/tmp/ntc`.  You'll see files like this get generated: `2019-05-10-16-18-24-ansible2.6.4-python-job-summary.txt`.  It will be a file per test permutation.  So, if you're testing 3 versions of Python and 3 versions of Ansible, you'll have 9 tests executed and 9 test reports generated.
