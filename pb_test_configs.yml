@@ -6,41 +6,44 @@
   connection: local
 
   vars:
-    output_dir: "outputs"
+    output_dir: "tests/outputs"
     test_dir: "tests"
+    template_dir: "{% set env_var = lookup('env', 'TEMPLATE_DIR') %}{% if env_var %}{{ env_var }}{% else %}templates{% endif %}"
 
   tasks:
 
     - name: "MAIN: GATHER ALL TEST DATA FILES"
       find:
-        paths: ./tests
+        paths: "./tests"
         patterns: "data.yml"
         recurse: true
-      register: test_data_files
+      register: "test_data_files"
 
     - name: "MAIN: REMOVE PREVIOUS OUTPUT DIRECTORIES"
       file:
         path: "{{ output_dir }}"
-        state: absent
+        state: "absent"
 
     - name: "MAIN: REMOVE LAST JOB SUMMARY FILE"
       file:
         path: "job-summary.txt"
-        state: absent
+        state: "absent"
 
     - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE 01"
       file:
         path: "{{ output_dir }}/reports"
-        state: directory
+        state: "directory"
 
     - name: "MAIN: CREATE REQUIRED OUTPUT DIRECTORY STRUCTURE 02"
       file:
         path: "/tmp/ntc"
-        state: directory
+        state: "directory"
 
     - name: "MAIN: EXECUTE TESTS"
-      include_tasks: tasks_config_tester.yml
+      include_tasks: "tasks_config_tester.yml"
       loop: "{{ test_data_files['files'] }}"
+      loop_control:
+        loop_var: "test_file"
 
     - name: "MAIN: GENERATE MASTER LOG"
       assemble:
@@ -60,7 +63,7 @@
     - name: "MAIN: ADD SUMMARY TO MASTER LOG"
       lineinfile:
         path: "job-summary.txt"
-        insertafter: EOF
+        insertafter: "EOF"
         line: |
 
           Summary: {{ test_data_files['files'] | length }} data files tested
