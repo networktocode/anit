@@ -1,15 +1,15 @@
 ---
 
-  # item is name of the data yaml file
+  # test_file is name of the data yaml file
   # the initating loop can be found in 
   # the playbook iterating over all data files
   # look for MAIN: EXECUTE ALL TESTS task
   - name: "TASKS: TESTING BEGINNING"
     set_fact:
       # path = tests/vlans/test_01/data.yml
-      feature: "{{ item.path.split('/')[1] }}"
-      test_name: "{{ item.path.split('/')[2] }}"
-      data_file: "{{ item.path }}"
+      feature: "{{ test_file.path.split('/')[1] }}"
+      test_name: "{{ test_file.path.split('/')[2] }}"
+      data_file: "{{ test_file.path }}"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> LOAD DATA"
     include_vars:
@@ -22,38 +22,39 @@
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> CREATE DIRECTORY STRUCTURE"
     file:
       path: "{{ test_path }}"
-      state: directory
+      state: "directory"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> GENERATE {{ feature | upper }} CONFIG"
     template:
-      src: "{{ template }}"
-      dest: ./{{ test_path }}/generated_config.cfg
-    with_first_found:
-      - "{{ test_dir }}/{{ feature }}/{{ test_name }}/{{ feature }}.j2"
-      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/{{ family }}/{{ model }}/{{ feature }}.j2"
-      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/{{ family }}/defaults/{{ feature }}.j2"
-      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ platform }}/defaults/{{ feature }}.j2"
-      - "templates/{{ meta['vendor'] }}/{{ meta['os'] }}/defaults/{{ feature }}.j2"
-      - "templates/{{ meta['vendor'] }}/defaults/{{ feature }}.j2"
-      - "{{ feature }}.j2"
-    loop_control:
-      loop_var: template
+      src: "{{ lookup('first_found', file_paths) }}"
+      dest: "./{{ test_path }}/generated_config.cfg"
+    vars:
+      file_paths:
+        files: "{{ feature }}.j2"
+        paths:
+          - "{{ test_dir }}/{{ feature }}/{{ test_name }}"
+          - "{{ template_dir }}/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ meta.get('platform') }}/{{ meta.get('family') }}/{{ meta.get('model') }}"
+          - "{{ template_dir }}/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ meta.get('platform') }}/{{ meta.get('family') }}/defaults"
+          - "{{ template_dir }}/{{ meta['vendor'] }}/{{ meta['os'] }}/{{ meta.get('platform') }}/defaults"
+          - "{{ template_dir }}/{{ meta['vendor'] }}/{{ meta['os'] }}/defaults"
+          - "{{ template_dir }}/{{ meta['vendor'] }}/defaults"
+          - "./"
     ignore_errors: true
-    register: template_status
+    register: "template_status"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> COMPARE EXPECTED TO TEST RESULTS"
     ntc_differ:
       pre_change: "{{ test_dir }}/{{ feature }}/{{ test_name }}/expected_config.cfg"
       post_change: "{{ test_path }}/generated_config.cfg"
       dest: "./{{ test_path }}/test_results.cfg"
-    register: diff
-    when: template_status['changed']
+    register: "diff"
+    when: "template_status['changed']"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> TEMPLATE FAILURE TO TEST RESULTS"
     copy:
-      content: "{{ template_status['results'][0]['msg'] }}"
+      content: "{{ template_status['msg'] }}"
       dest: "./{{ test_path }}/test_results.cfg"
-    when: template_status is failed
+    when: "template_status is failed"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> SHOW THE DIFF"
     debug:
@@ -62,12 +63,11 @@
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> ASSERT THAT THERE IS NO DIFF"
     assert:
       that: 
-        - diff.diff_output == ""
+        - "diff.diff_output == ''"
     ignore_errors: true
-    register: assert_result
+    register: "assert_result"
 
   - name: "{{ feature | upper }}: {{ test_name | upper }}-> GENERATE TEST LOG"
     template:
       src: "report.j2"
       dest: "{{ output_dir }}/reports/{{ feature }}_{{ test_name }}.txt"
-

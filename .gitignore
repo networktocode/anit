@@ -8,4 +8,5 @@ pip-wheel-metadata/
 .nox
 outputs/
 .nox/*
+*.retry
 
