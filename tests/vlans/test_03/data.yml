@@ -8,5 +8,7 @@ vlans:
   - id: 10
     name: web
   - id: 20
-  - id: 300
+    name: app
+    state: down
+  - id: 30
     name: db
